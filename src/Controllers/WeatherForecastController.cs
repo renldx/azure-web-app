@@ -29,5 +29,12 @@ namespace WebApi.Controllers
             })
             .ToArray();
         }
+
+        public IActionResult Post([FromBody] WeatherForecast forecast)
+        {
+            // Write to DB
+
+            return Ok();
+        }
     }
 }
