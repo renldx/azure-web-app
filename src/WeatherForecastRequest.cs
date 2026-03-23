@@ -1,6 +1,6 @@
 namespace WebApi
 {
-    public class WeatherForecast
+    public class WeatherForecastRequest
     {
         public DateOnly Date { get; set; }
 
