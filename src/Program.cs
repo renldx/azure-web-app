@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using WebApi.Models;
@@ -19,6 +20,8 @@ builder.Configuration.AddAzureKeyVault(
 builder.Services.AddDbContext<WeatherForecastContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("WeatherDb")));
+
+builder.Services.AddOpenTelemetry().UseAzureMonitor();
 
 var app = builder.Build();
 
