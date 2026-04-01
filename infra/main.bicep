@@ -3,6 +3,9 @@ targetScope = 'resourceGroup'
 param environmentName string
 param location string = resourceGroup().location
 
+@secure()
+param administratorLoginPassword string
+
 var tags = {}
 
 // --- Foundation ---
@@ -20,7 +23,7 @@ module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeployment'
   params: {
     location: location
-    name: 'kv-${environmentName}'
+    name: 'kv-${environmentName}-renldx'
     tags: tags
   }
 }
@@ -43,8 +46,9 @@ module sqlServer 'modules/sql.bicep' = {
   name: 'sqlDeployment'
   params: {
     location: location
-    serverName: 'sql-${environmentName}'
+    serverName: 'sql-${environmentName}-renldx'
     // Pass Key Vault secrets or references here if needed
+    administratorLoginPassword: administratorLoginPassword
     tags: tags
   }
 }
@@ -53,7 +57,7 @@ module appService 'modules/appservice.bicep' = {
   name: 'appServiceDeployment'
   params: {
     location: location
-    appName: 'app-${environmentName}'
+    appName: 'app-${environmentName}-renldx'
     appInsightsInstrumentationKey: appInsights.outputs.appInsightsName
     dbConnectionString: sqlServer.outputs.connectionString
     tags: tags

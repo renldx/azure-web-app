@@ -2,13 +2,16 @@ param location string
 param serverName string
 param tags object = {}
 
+@secure()
+param administratorLoginPassword string
+
 resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
   name: serverName
   location: location
   tags: tags
   properties: {
     administratorLogin: 'server-admin'
-    //administratorLoginPassword: administratorLoginPassword 
+    administratorLoginPassword: administratorLoginPassword 
     minimalTlsVersion: '1.2'
   }
 }
