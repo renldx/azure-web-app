@@ -63,10 +63,10 @@ module appService 'modules/appservice.bicep' = {
   params: {
     location: location
     appName: 'app-${environmentName}-renldx'
-    vaultUri: keyVault.outputs.vaultUri
+    keyVaultUri: keyVault.outputs.vaultUri
     appInsightsConnectionString: appInsights.outputs.appInsightsConnectionString
-    vaultId: keyVault.outputs.vaultId
-    vaultName: keyVault.outputs.vaultName
+    keyVaultId: keyVault.outputs.vaultId
+    keyVaultName: keyVault.outputs.vaultName
     tags: tags
   }
 }

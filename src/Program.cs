@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Configuration.AddAzureKeyVault(
-    new Uri(builder.Configuration["KeyVaultUrl"]!),
+    new Uri(builder.Configuration["KEY_VAULT_URL"]!),
     new DefaultAzureCredential());
 
 builder.Services.AddDbContext<WeatherForecastContext>(options =>
