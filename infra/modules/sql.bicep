@@ -3,7 +3,10 @@ param serverName string
 param tags object = {}
 
 @secure()
-param administratorLoginPassword string
+param dbAdminUsername string
+
+@secure()
+param dbAdminPassword string
 
 resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
   name: serverName
@@ -11,7 +14,7 @@ resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
   tags: tags
   properties: {
     administratorLogin: 'server-admin'
-    administratorLoginPassword: administratorLoginPassword 
+    administratorLoginPassword: dbAdminPassword 
     minimalTlsVersion: '1.2'
   }
 }
@@ -39,4 +42,5 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2024-11-01-preview' = {
   }
 }
 
-output connectionString string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabase.name};Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+@secure()
+output connectionString string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabase.name};Persist Security Info=False;User ID=${dbAdminUsername};Password=${dbAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'

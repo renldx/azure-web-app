@@ -4,7 +4,10 @@ param environmentName string
 param location string = resourceGroup().location
 
 @secure()
-param administratorLoginPassword string
+param dbAdminUsername string
+
+@secure()
+param dbAdminPassword string
 
 var tags = {}
 
@@ -24,6 +27,7 @@ module keyVault 'modules/keyvault.bicep' = {
   params: {
     location: location
     name: 'kv-${environmentName}-renldx'
+    dbConnectionString: sqlServer.outputs.connectionString
     tags: tags
   }
 }
@@ -48,7 +52,8 @@ module sqlServer 'modules/sql.bicep' = {
     location: location
     serverName: 'sql-${environmentName}-renldx'
     // Pass Key Vault secrets or references here if needed
-    administratorLoginPassword: administratorLoginPassword
+    dbAdminUsername: dbAdminUsername
+    dbAdminPassword: dbAdminPassword
     tags: tags
   }
 }
@@ -58,8 +63,10 @@ module appService 'modules/appservice.bicep' = {
   params: {
     location: location
     appName: 'app-${environmentName}-renldx'
-    appInsightsInstrumentationKey: appInsights.outputs.appInsightsName
-    dbConnectionString: sqlServer.outputs.connectionString
+    vaultUri: keyVault.outputs.vaultUri
+    appInsightsConnectionString: appInsights.outputs.appInsightsConnectionString
+    vaultId: keyVault.outputs.vaultId
+    vaultName: keyVault.outputs.vaultName
     tags: tags
   }
 }

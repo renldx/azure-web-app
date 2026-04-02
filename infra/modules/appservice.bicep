@@ -1,7 +1,9 @@
 param location string
 param appName string
-param appInsightsInstrumentationKey string
-param dbConnectionString string
+param vaultUri string
+param appInsightsConnectionString string
+param vaultId string
+param vaultName string
 param tags object = {}
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2025-03-01' = {
@@ -36,14 +38,29 @@ resource appServiceApp 'Microsoft.Web/sites@2025-03-01' = {
       http20Enabled: true
       appSettings: [
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsightsInstrumentationKey
+          name: 'KeyVaultUrl' // Used to fetch the DB connection string
+          value: vaultUri
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: dbConnectionString
+          value: appInsightsConnectionString
         }
       ]
     }
+  }
+}
+
+resource targetKeyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
+  name: vaultName
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(vaultId, appServiceApp.id, 'secret-reader-role')
+  scope: targetKeyVault
+  properties: {
+    // 'Key Vault Secrets User' Role ID
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+    principalId: appServiceApp.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
