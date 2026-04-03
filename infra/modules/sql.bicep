@@ -8,7 +8,7 @@ param dbAdminUsername string
 @secure()
 param dbAdminPassword string
 
-resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
+resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
   name: serverName
   location: location
   tags: tags
@@ -19,7 +19,7 @@ resource sqlServer 'Microsoft.Sql/servers@2024-11-01-preview' = {
   }
 }
 
-resource allowAzureServices 'Microsoft.Sql/servers/firewallRules@2023-05-01-preview' = {
+resource allowAzureServices 'Microsoft.Sql/servers/firewallRules@2023-08-01' = {
   name: 'AllowAzureServices'
   parent: sqlServer
   properties: {
@@ -28,7 +28,7 @@ resource allowAzureServices 'Microsoft.Sql/servers/firewallRules@2023-05-01-prev
   }
 }
 
-resource sqlDatabase 'Microsoft.Sql/servers/databases@2024-11-01-preview' = {
+resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
   parent: sqlServer
   name: 'my-sql-database'
   location: location

@@ -1,7 +1,7 @@
 param name string
 param tags object = {}
 
-resource actionGroup 'Microsoft.Insights/actionGroups@2024-10-01-preview' = {
+resource actionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
   name: name
   location: 'Global'
   tags: tags

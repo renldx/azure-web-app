@@ -3,7 +3,7 @@ param appInsightsId string
 param actionGroupId string
 param tags object = {}
 
-resource smartAlerts 'microsoft.alertsManagement/smartDetectorAlertRules@2021-04-01' = {
+resource smartAlerts 'Microsoft.AlertsManagement/smartDetectorAlertRules@2021-04-01' = {
   name: 'Failure Anomalies - ${appInsightsName}'
   location: 'global'
   tags: tags
