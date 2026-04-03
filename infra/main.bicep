@@ -1,13 +1,9 @@
 targetScope = 'resourceGroup'
 
 param environmentName string
+param dbAdminGroupId string
+
 param location string = resourceGroup().location
-
-@secure()
-param dbAdminUsername string
-
-@secure()
-param dbAdminPassword string
 
 var tags = {}
 
@@ -51,9 +47,7 @@ module sqlServer 'modules/sql.bicep' = {
   params: {
     location: location
     serverName: 'sql-${environmentName}-renldx'
-    // Pass Key Vault secrets or references here if needed
-    dbAdminUsername: dbAdminUsername
-    dbAdminPassword: dbAdminPassword
+    dbAdminGroupId: dbAdminGroupId
     tags: tags
   }
 }
