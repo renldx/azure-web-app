@@ -1,5 +1,6 @@
 param location string
 param serverName string
+param dbAdminGroupName string
 param dbAdminGroupId string
 param tags object = {}
 
@@ -12,7 +13,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
     administrators: {
       administratorType: 'ActiveDirectory'
       principalType: 'Group'
-      login: 'DB-Admins'
+      login: dbAdminGroupName
       sid: dbAdminGroupId
       tenantId: subscription().tenantId
       azureADOnlyAuthentication: true
@@ -52,5 +53,4 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
   }
 }
 
-@secure()
 output connectionString string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabase.name};Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'

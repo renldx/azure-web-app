@@ -1,9 +1,10 @@
 param location string
 param appName string
-param keyVaultUri string
-param appInsightsConnectionString string
 param keyVaultId string
 param keyVaultName string
+param keyVaultUri string
+param dbConnectionString string
+param appInsightsConnectionString string
 param tags object = {}
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2025-03-01' = {
@@ -38,12 +39,19 @@ resource appServiceApp 'Microsoft.Web/sites@2025-03-01' = {
       http20Enabled: true
       appSettings: [
         {
-          name: 'KEY_VAULT_URL' // Used to fetch the DB connection string
+          name: 'KEY_VAULT_URL'
           value: keyVaultUri
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsightsConnectionString
+        }
+      ]
+      connectionStrings: [
+        {
+          name: 'WeatherDb'
+          connectionString: dbConnectionString
+          type: 'SQLAzure'
         }
       ]
     }
