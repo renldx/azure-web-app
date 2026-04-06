@@ -18,7 +18,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2025-03-01' = {
   }
   properties: {
     // Usually, for a basic plan, the properties block can be empty.
-    // We only add 'reserved: true' if this were a Linux plan.
+    // We only add "reserved: true" if this were a Linux plan.
   }
 }
 
@@ -66,7 +66,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(keyVaultId, appServiceApp.id, 'secret-reader-role')
   scope: targetKeyVault
   properties: {
-    // 'Key Vault Secrets User' Role ID
+    // "Key Vault Secrets User" Role ID
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
     principalId: appServiceApp.identity.principalId
     principalType: 'ServicePrincipal'

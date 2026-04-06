@@ -3,6 +3,7 @@ targetScope = 'resourceGroup'
 param environmentName string
 param dbAdminGroupName string
 param dbAdminGroupId string
+param sqlProvisionerName string
 
 param location string = resourceGroup().location
 
@@ -51,6 +52,8 @@ module sqlServer 'modules/sql.bicep' = {
     serverName: 'sql-${environmentName}-renldx'
     dbAdminGroupName: dbAdminGroupName
     dbAdminGroupId: dbAdminGroupId
+    sqlProvisionerName: sqlProvisionerName
+    appServiceName: appName
     tags: tags
   }
 }
