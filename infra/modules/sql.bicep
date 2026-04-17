@@ -97,7 +97,8 @@ resource createAppUser 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       $server = $Env:SQL_SERVER_NAME
       $database = $Env:SQL_DATABASE_NAME
       $appIdentityName = $Env:APP_IDENTITY_NAME
-      $token = (Get-AzAccessToken -ResourceUrl "https://database.windows.net/").Token
+      $sqlSuffix = (Get-AzContext).Environment.SqlDatabaseDnsSuffix
+      $token = (Get-AzAccessToken -ResourceUrl "https://$sqlSuffix/").Token
 
       $query = @"
 IF NOT EXISTS (
@@ -144,7 +145,7 @@ WHERE u.name = '$appIdentityName';
 "@
 
       $result = Invoke-Sqlcmd `
-        -ServerInstance "$server.database.windows.net" `
+        -ServerInstance "$server.$sqlSuffix" `
         -Database $database `
         -AccessToken $token `
         -Query $query
