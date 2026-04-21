@@ -97,6 +97,7 @@ resource createAppUser 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       $database = $Env:SQL_DATABASE_NAME
       $appIdentityName = $Env:APP_IDENTITY_NAME
       $sqlSuffix = (Get-AzContext).Environment.SqlDatabaseDnsSuffix
+      $sqlSuffix = $sqlSuffix.TrimStart('.')
       $token = (Get-AzAccessToken -ResourceUrl "https://$sqlSuffix/").Token
 
       $query = @"
