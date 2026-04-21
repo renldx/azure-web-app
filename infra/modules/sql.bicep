@@ -14,7 +14,6 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
     type: 'SystemAssigned' // Needs "Directory Readers" permission for user creation
   }
   properties: {
-    administratorLogin: 'server-admin'
     administrators: {
       administratorType: 'ActiveDirectory'
       principalType: 'Group'
