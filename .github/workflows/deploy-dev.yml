@@ -15,7 +15,29 @@ permissions:
   contents: read
 
 jobs:
-  build-and-deploy:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src
+    steps:
+      - uses: actions/checkout@v4 # Pin to SHA in production!
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+          cache: true
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build
+
+      - name: Test
+        run: dotnet test
+
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
