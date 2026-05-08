@@ -3,7 +3,6 @@ param appName string
 param keyVaultId string
 param keyVaultName string
 param keyVaultUri string
-param dbConnectionString string
 param appInsightsConnectionString string
 param tags object = {}
 
@@ -45,13 +44,6 @@ resource appServiceApp 'Microsoft.Web/sites@2025-03-01' = {
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsightsConnectionString
-        }
-      ]
-      connectionStrings: [
-        {
-          name: 'WeatherDb'
-          connectionString: dbConnectionString
-          type: 'SQLAzure'
         }
       ]
     }

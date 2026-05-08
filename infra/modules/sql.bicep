@@ -3,6 +3,7 @@ param serverName string
 param dbAdminGroupName string
 param dbAdminGroupId string
 param sqlProvisionerName string
+param keyVaultName string
 param appServiceName string
 param tags object = {}
 
@@ -54,6 +55,18 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
     // Keep these only if you are specifically using the "Azure Free" offer
     useFreeLimit: true
     freeLimitExhaustionBehavior: 'AutoPause'
+  }
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
+  name: keyVaultName
+}
+
+resource sqlSecret 'Microsoft.KeyVault/vaults/secrets@2025-05-01' = {
+  parent: keyVault
+  name: 'ConnectionStrings--WeatherDb'
+  properties: {
+    value: 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabase.name};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";'
   }
 }
 
@@ -161,5 +174,3 @@ WHERE u.name = '$appIdentityName';
     '''
   }
 }
-
-output connectionString string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDatabase.name};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication="Active Directory Default";'

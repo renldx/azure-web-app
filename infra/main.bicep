@@ -8,6 +8,7 @@ param sqlProvisionerName string
 param location string = resourceGroup().location
 
 var appName = 'app-${environmentName}-renldx'
+var keyVaultName = 'kv-${environmentName}-renldx'
 
 var tags = {}
 
@@ -26,7 +27,7 @@ module keyVault 'modules/keyvault.bicep' = {
   name: 'keyVaultDeployment'
   params: {
     location: location
-    name: 'kv-${environmentName}-renldx'
+    name: keyVaultName
     tags: tags
   }
 }
@@ -53,6 +54,7 @@ module sqlServer 'modules/sql.bicep' = {
     dbAdminGroupName: dbAdminGroupName
     dbAdminGroupId: dbAdminGroupId
     sqlProvisionerName: sqlProvisionerName
+    keyVaultName: keyVaultName
     appServiceName: appName
     tags: tags
   }
@@ -66,7 +68,6 @@ module appService 'modules/appservice.bicep' = {
     keyVaultId: keyVault.outputs.vaultId
     keyVaultName: keyVault.outputs.vaultName
     keyVaultUri: keyVault.outputs.vaultUri
-    dbConnectionString: sqlServer.outputs.connectionString
     appInsightsConnectionString: appInsights.outputs.appInsightsConnectionString
     tags: tags
   }
