@@ -50,6 +50,15 @@ jobs:
           name: migration-bundle
           path: src/efbundle
 
+      - name: Publish Application
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Upload Application Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webapp-artifact
+          path: src/publish
+
   deploy:
     runs-on: ubuntu-latest
     steps:
