@@ -113,7 +113,7 @@ jobs:
       - name: Apply DB Migrations
         run: |
           chmod +x ./artifacts/migration-bundle/efbundle
-          ./artifacts/migration-bundle/efbundle --connection "${{ env.DB_CONNECTION_STRING }}"
+          ./artifacts/migration-bundle/efbundle --connection "$DB_CONNECTION_STRING"
 
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v3
