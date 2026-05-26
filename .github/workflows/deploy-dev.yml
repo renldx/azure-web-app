@@ -8,7 +8,7 @@ on:
       resourceGroupName:
         description: "Azure Resource Group Name"
         required: true
-        default: "rg-web-app-dev-cac-bicep-gha" # Needs to exist + GHA SPN needs "Contributor" & "User Access Administrator" RBAC
+        default: "rg-web-app-dev-cac-bicep-gha" # Needs to exist + GHA SPN needs "Contributor", "User Access Administrator" & Key Vault Secrets User RBAC
 
 permissions:
   id-token: write
@@ -59,8 +59,12 @@ jobs:
           name: webapp-artifact
           path: src/publish
 
-  deploy:
+  deploy-infra:
     runs-on: ubuntu-latest
+    needs: build-test
+    outputs:
+      appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
+      keyVaultName: ${{ steps.bicep-deploy.outputs.keyVaultName }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -73,6 +77,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Bicep Files
+        id: bicep-deploy
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
@@ -81,3 +86,37 @@ jobs:
           template: infra/main.bicep
           parameters: infra/params/dev.bicepparam
           failOnStdErr: false
+
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: deploy-infra
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Login to Azure CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Fetch Connection String from Key Vault
+        run: |
+          CONN_STRING=$(az keyvault secret show --name "ConnectionStrings--WeatherDb" --vault-name "${{ needs.deploy-infra.outputs.keyVaultName }}" --query "value" -o tsv)
+
+          echo "::add-mask::$CONN_STRING"
+          echo "DB_CONNECTION_STRING=$CONN_STRING" >> $GITHUB_ENV
+
+      - name: Apply DB Migrations
+        run: |
+          chmod +x ./artifacts/migration-bundle/efbundle
+          ./artifacts/migration-bundle/efbundle --connection "${{ env.DB_CONNECTION_STRING }}"
+
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ needs.deploy-infra.outputs.appServiceName }}
+          package: ./artifacts/webapp-artifact

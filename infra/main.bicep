@@ -92,3 +92,6 @@ module smartAlerts 'modules/smartdetectionalerts.bicep' = {
     tags: tags
   }
 }
+
+output appServiceName string = appName
+output keyVaultName string = keyVaultName
