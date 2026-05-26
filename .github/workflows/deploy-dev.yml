@@ -8,7 +8,7 @@ on:
       resourceGroupName:
         description: "Azure Resource Group Name"
         required: true
-        default: "rg-web-app-dev-cac-bicep-gha" # Needs to exist + GHA SPN needs "Contributor", "User Access Administrator" & Key Vault Secrets User RBAC
+        default: "rg-web-app-dev-cac-bicep-gha" # Needs to exist + GHA SPN needs "Contributor", "User Access Administrator" & Key Vault Secrets User RBAC + DB admin permissions for EF migrations
 
 permissions:
   id-token: write
